@@ -171,3 +171,4 @@ var con = mysql.createConnection({
   })
   }
 
+// Still need to insert into db and update db//
