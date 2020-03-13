@@ -136,3 +136,38 @@ var con = mysql.createConnection({
     });
   }
 
+   //Adding a new employee into db//
+
+   function addEmployee() {
+    inquirer.prompt([{
+      type: 'input',
+      message: 'Employee first name',
+      name: 'firstName'
+    },
+    {
+      type: 'input',
+      message: 'Employee last name',
+      name: 'lastName'
+    },
+    {
+      type: 'input',
+      message: 'Enter role id',
+      name: 'roleId'
+    },
+    {
+      type: 'input',
+      message: 'Enter manager id',
+      name: 'managerId'
+    }
+
+  ]).then(function(answers){
+    con.query("INSERT INTO employees set ?", {first_name: answers.firstName, last_name: answers.lastName, role_id: answers.roleId, manager_id: answers.managerId}, function(err, data) {
+      if (err) throw err;
+
+      console.log("\n" + "New employee added: " + answers.firstName + " " + answers.lastName + "\n");
+
+      selectionMaker();
+    });
+  })
+  }
+
