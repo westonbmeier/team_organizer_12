@@ -37,27 +37,27 @@ var con = mysql.createConnection({
     
         switch (answer.action) {
         case 'View departments':
-            viewDepartments();
+            departments();
             break;
 
         case 'View roles':
-            viewRoles();
+            roles();
             break;
 
         case 'View employees':
-            viewEmployees();
+            employees();
             break;
 
         case 'Add department':
             addDepartment();
             break;
 
-        case 'Add role':
-            addRole();
-            break;
-
         case 'Add employee':
             addEmployee();
+            break;
+
+        case 'Add role':
+            addRole();
             break;
 
         case 'Update a role':
@@ -74,6 +74,8 @@ var con = mysql.createConnection({
         }
       });
   }
+
+  //Viewing dept. employees and roles from db//
 
   function departments() {
     var query = "SELECT * FROM DEPARTMENTS";
@@ -112,3 +114,25 @@ var con = mysql.createConnection({
       selectionMaker();
     });
   }
+
+   //Adding a department into db//
+
+   function addDepartment() {
+    inquirer.prompt(
+    {
+      type: 'input',
+      message: 'Name of new department',
+      name: 'department'
+    }
+
+    ).then(function(answers){
+      con.query("INSERT INTO departments (name) VALUES (?)", [answers.department], function(err, data) {
+        if (err) throw err
+
+        console.log("\n" + "New department added: " + answers.department);
+
+        selectionMaker();
+      });
+    });
+  }
+
