@@ -6,7 +6,7 @@ var con = mysql.createConnection({
     host: "localhost",
     user: "root",
     port: 3306,
-    password: "Wm319660",
+    password: "MYSQL_PASSWORD",
     database: "company_db"
   });
   
@@ -73,4 +73,42 @@ var con = mysql.createConnection({
             break;
         }
       });
+  }
+
+  function departments() {
+    var query = "SELECT * FROM DEPARTMENTS";
+
+      con.query(query, function(err, res) {
+        if (err) throw err;
+
+        for (var i = 0; i < res.length; i++) {
+        console.log("\n" + "|| Name: " + res[i].name + "|| ID: " + res[i].id);
+      }
+      selectionMaker();
+    });
+  }
+
+  function employees() {
+    var query = "SELECT CONCAT(employees.first_name, ' ', employees.last_name) as employee_name, roles.title, departments.name, employees.id FROM employees LEFT JOIN roles on employees.role_id = roles.id LEFT JOIN departments ON departments.id = roles.department_id ";
+      con.query(query, function(err, res) {
+        if (err) throw err;
+
+        for (var i = 0; i < res.length; i++) {
+          console.log("\n" + "|| Employee: " + res[i].employee_name + "|| Title: " + res[i].title + "|| Department: " + res[i].name + "|| ID: " + res[i].id);
+      }
+      selectionMaker();
+    });
+  }
+
+  function roles() {
+    var query = "SELECT * FROM ROLES";
+
+      con.query(query, function(err, res) {
+        if (err) throw err;
+
+        for (var i = 0; i < res.length; i++) {
+          console.log("\n" + "|| Role: " + res[i].title);
+      }
+      selectionMaker();
+    });
   }
