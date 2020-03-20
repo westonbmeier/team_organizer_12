@@ -171,4 +171,33 @@ var con = mysql.createConnection({
   })
   }
 
-// Still need to insert into db and update db//
+  function addRole() {
+    inquirer.prompt([
+      {
+        type: 'input',
+        message: 'Enter new role name',
+        name: 'role'
+      },
+
+      {
+        type: 'input',
+        message: 'Enter new role salary',
+        name: 'salary'
+      },
+
+      {
+        type: 'input',
+        message: 'enter new role department id',
+        name: 'department_id'
+      },
+
+      ]).then(function(answers){
+        con.query("INSERT INTO roles set ?", {title: answers.role, salary: answers.salary, department_id: answers.department_id}, function(err, data) {
+          if (err) throw err
+
+          console.log("\n" + "New role added: " + answers.role);
+          
+          runManager();
+        });
+      });
+  }
