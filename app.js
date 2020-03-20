@@ -225,7 +225,7 @@ var con = mysql.createConnection({
           name: 'department'
         }
         ]
-        
+
         ).then(function(answer){
          var deptUpdate = answer.department;
 
@@ -256,3 +256,35 @@ var con = mysql.createConnection({
         });
     });
   }
+
+  function updateRole() {
+    con.query("SELECT * FROM roles", function(err, data) {
+      if (err) throw err;
+
+      let choices = [];
+
+      for (i = 0; i < data.length; i ++) {
+        choices.push({name: `${data[i].title}`, value: data[i].title});
+      }
+
+      inquirer.prompt({
+        type: 'list',
+        message: 'Select role to update?',
+        choices: choices,
+        name: 'role'
+      }).then(function(answer){
+        choices = [];
+        var roleUpdate = answer.role;
+        inquirer.prompt(
+        [{
+          type: 'input',
+          message: 'Enter updated role title',
+          name: 'title'
+        },
+        {
+          type: 'input',
+          message: 'Enter updated salary',
+          name: 'salary'
+        }
+      ])
+
