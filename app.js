@@ -170,6 +170,8 @@ var con = mysql.createConnection({
     });
   })
   }
+ 
+  //Adding role into db//
 
   function addRole() {
     inquirer.prompt([
@@ -196,8 +198,61 @@ var con = mysql.createConnection({
           if (err) throw err
 
           console.log("\n" + "New role added: " + answers.role);
-          
-          runManager();
+
+          selectionMaker();
         });
       });
+  }
+
+  //Update into db//
+  function updateDepartment() {
+    con.query("SELECT * FROM  departments", function(err, data) {
+      if (err) throw err;
+
+      let choices = [];
+
+      for (i = 0; i < data.length; i++) {
+        choices.push({name: `${data[i].name}`, value: `${data[i].name}`});
+
+      }
+
+      inquirer.prompt(
+        [
+        {
+          type: 'list',
+          message: 'Select department to update',
+          choices: choices,
+          name: 'department'
+        }
+        ]
+        
+        ).then(function(answer){
+         var deptUpdate = answer.department;
+
+         inquirer.prompt(
+            {
+              type: 'input',
+              message: 'New department name',
+              name: 'newName'
+            }
+
+         ).then(function(answer) {
+          var newName = answer.newName;
+          con.query("UPDATE departments SET ? WHERE ?",
+            [
+              {
+                name: newName
+              },
+              {
+                name: deptUpdate
+              }
+            ]
+          );
+
+          console.log("\n" + "Department updated to " + newName + "\n");
+
+          selectionMaker();
+         });
+        });
+    });
   }
