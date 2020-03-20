@@ -6,18 +6,10 @@ var con = mysql.createConnection({
     host: "localhost",
     user: "root",
     port: 3306,
-    password: "MYSQL_PASSWORD",
+    password: process.env.MYSQL_PASSWORD,
     database: "company_db"
   });
   
-  con.connect(function(err) {
-    if (err) throw err;
-
-    console.log("Connected!");
-
-    selectionMaker();
-  });
-
   con.connect(function(err) {
     if (err) throw err;
 
@@ -33,9 +25,9 @@ var con = mysql.createConnection({
           message: 'What would you like to do?',
           name: 'action',
           choices: ['View departments', 'View roles', 'View employees', 'Add department', 'Add role', 'Add employee','Update a role', 'Update a department', 'Exit']
-      }).then(function(response){
+      }).then(function(answer){
     
-        switch (response.action) {
+        switch (answer.action) {
         case 'View departments':
             departments();
             break;
@@ -70,7 +62,7 @@ var con = mysql.createConnection({
           
         case 'Exit':
             con.end();
-            break;
+          
         }
       });
   }
@@ -84,19 +76,19 @@ var con = mysql.createConnection({
         if (err) throw err;
 
         for (var i = 0; i < res.length; i++) {
-        console.log("\n" + "|| Name: " + res[i].name + "|| ID: " + res[i].id);
+          console.log("\n" + " Name: " + res[i].dept_name + " ID: " + res[i].id);
       }
       selectionMaker();
     });
   }
 
   function employees() {
-    var query = "SELECT CONCAT(employees.first_name, ' ', employees.last_name) as employee_name, roles.title, departments.name, employees.id FROM employees LEFT JOIN roles on employees.role_id = roles.id LEFT JOIN departments ON departments.id = roles.department_id ";
+    var query = "SELECT CONCAT(employees.first_name, ' ', employees.last_name) as employee_name, roles.title, departments.dept_name, employees.id FROM employees LEFT JOIN roles on employees.role_id = roles.id LEFT JOIN departments ON departments.id = roles.department_id ";
       con.query(query, function(err, res) {
         if (err) throw err;
 
         for (var i = 0; i < res.length; i++) {
-          console.log("\n" + "|| Employee: " + res[i].employee_name + "|| Title: " + res[i].title + "|| Department: " + res[i].name + "|| ID: " + res[i].id);
+          console.log("\n" + " Employee: " + res[i].employee_name + " Title: " + res[i].title + " Department: " + res[i].name + " ID: " + res[i].id);
       }
       selectionMaker();
     });
@@ -109,7 +101,7 @@ var con = mysql.createConnection({
         if (err) throw err;
 
         for (var i = 0; i < res.length; i++) {
-          console.log("\n" + "|| Role: " + res[i].title);
+          console.log("\n" + " Role: " + res[i].title);
       }
       selectionMaker();
     });
@@ -125,11 +117,11 @@ var con = mysql.createConnection({
       name: 'department'
     }
 
-    ).then(function(response){
-      con.query("INSERT INTO departments (name) VALUES (?)", [response.department], function(err, data) {
+    ).then(function(answer){
+      con.query("INSERT INTO departments (dept_name) VALUES (?)", [answer.department], function(err, data) {
         if (err) throw err
 
-        console.log("\n" + "New department added: " + response.department);
+        console.log("\n" + "New department added: " + answer.department);
 
         selectionMaker();
       });
@@ -160,11 +152,11 @@ var con = mysql.createConnection({
       name: 'managerId'
     }
 
-  ]).then(function(response){
-    con.query("INSERT INTO employees set ?", {first_name: response.firstName, last_name: response.lastName, role_id: response.roleId, manager_id: response.managerId}, function(err, data) {
+  ]).then(function(answer){
+    con.query("INSERT INTO employees set ?", {first_name: answer.firstName, last_name: answer.lastName, role_id: answer.roleId, manager_id: answer.managerId}, function(err, data) {
       if (err) throw err;
 
-      console.log("\n" + "New employee added: " + response.firstName + " " + response.lastName + "\n");
+      console.log("\n" + "New employee added: " + answer.firstName + " " + answer.lastName + "\n");
 
       selectionMaker();
     });
@@ -193,11 +185,11 @@ var con = mysql.createConnection({
         name: 'department_id'
       },
 
-      ]).then(function(response){
-        con.query("INSERT INTO roles set ?", {title: response.role, salary: response.salary, department_id: response.department_id}, function(err, data) {
+      ]).then(function(answer){
+        con.query("INSERT INTO roles set ?", {title: answer.role, salary: answer.salary, department_id: answer.department_id}, function(err, data) {
           if (err) throw err
 
-          console.log("\n" + "New role added: " + response.role);
+          console.log("\n" + "New role added: " + answer.role);
 
           selectionMaker();
         });
@@ -226,8 +218,8 @@ var con = mysql.createConnection({
         }
         ]
 
-        ).then(function(response){
-         var deptUpdate = response.department;
+        ).then(function(answer){
+         var deptUpdate = answer.department;
 
          inquirer.prompt(
             {
@@ -236,8 +228,8 @@ var con = mysql.createConnection({
               name: 'newName'
             }
 
-         ).then(function(response) {
-          var newName = response.newName;
+         ).then(function(answer) {
+          var newName = answer.newName;
           con.query("UPDATE departments SET ? WHERE ?",
             [
               {
@@ -272,9 +264,9 @@ var con = mysql.createConnection({
         message: 'Select role to update?',
         choices: choices,
         name: 'role'
-      }).then(function(response){
+      }).then(function(answer){
         choices = [];
-        var roleUpdate = response.role;
+        var roleUpdate = answer.role;
         inquirer.prompt(
         [{
           type: 'input',
@@ -287,10 +279,10 @@ var con = mysql.createConnection({
           name: 'salary'
         }
       ])
-      .then(function(response) {
-        var updatedTitle = response.title;
+      .then(function(answer) {
+        var updatedTitle = answer.title;
 
-        var updatedSalary = response.salary;
+        var updatedSalary = answer.salary;
 
         con.query("UPDATE roles SET ? WHERE ?", 
         [
