@@ -249,7 +249,7 @@ var con = mysql.createConnection({
             ]
           );
 
-          console.log("\n" + "Department updated to " + newName + "\n");
+          console.log("\n" + "Department is now " + newName + "\n");
 
           selectionMaker();
          });
@@ -287,4 +287,27 @@ var con = mysql.createConnection({
           name: 'salary'
         }
       ])
+      .then(function(answers) {
+        var updatedTitle = answers.title;
 
+        var updatedSalary = answers.salary;
+
+        con.query("UPDATE roles SET ? WHERE ?", 
+        [
+          {
+            title: updatedTitle,
+            salary: updatedSalary
+          },
+          {
+            title: roleUpdate
+          }
+        ]
+        );
+
+        console.log('\n'+'Role is now ' + roleUpdate + '\n');
+
+        selectionMaker();
+        });
+    });
+  });
+}
