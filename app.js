@@ -33,9 +33,9 @@ var con = mysql.createConnection({
           message: 'What would you like to do?',
           name: 'action',
           choices: ['View departments', 'View roles', 'View employees', 'Add department', 'Add role', 'Add employee','Update a role', 'Update a department', 'Exit']
-      }).then(function(answer){
+      }).then(function(response){
     
-        switch (answer.action) {
+        switch (response.action) {
         case 'View departments':
             departments();
             break;
@@ -125,11 +125,11 @@ var con = mysql.createConnection({
       name: 'department'
     }
 
-    ).then(function(answers){
-      con.query("INSERT INTO departments (name) VALUES (?)", [answers.department], function(err, data) {
+    ).then(function(response){
+      con.query("INSERT INTO departments (name) VALUES (?)", [response.department], function(err, data) {
         if (err) throw err
 
-        console.log("\n" + "New department added: " + answers.department);
+        console.log("\n" + "New department added: " + response.department);
 
         selectionMaker();
       });
@@ -160,11 +160,11 @@ var con = mysql.createConnection({
       name: 'managerId'
     }
 
-  ]).then(function(answers){
-    con.query("INSERT INTO employees set ?", {first_name: answers.firstName, last_name: answers.lastName, role_id: answers.roleId, manager_id: answers.managerId}, function(err, data) {
+  ]).then(function(response){
+    con.query("INSERT INTO employees set ?", {first_name: response.firstName, last_name: response.lastName, role_id: response.roleId, manager_id: response.managerId}, function(err, data) {
       if (err) throw err;
 
-      console.log("\n" + "New employee added: " + answers.firstName + " " + answers.lastName + "\n");
+      console.log("\n" + "New employee added: " + response.firstName + " " + response.lastName + "\n");
 
       selectionMaker();
     });
@@ -193,11 +193,11 @@ var con = mysql.createConnection({
         name: 'department_id'
       },
 
-      ]).then(function(answers){
-        con.query("INSERT INTO roles set ?", {title: answers.role, salary: answers.salary, department_id: answers.department_id}, function(err, data) {
+      ]).then(function(response){
+        con.query("INSERT INTO roles set ?", {title: response.role, salary: response.salary, department_id: response.department_id}, function(err, data) {
           if (err) throw err
 
-          console.log("\n" + "New role added: " + answers.role);
+          console.log("\n" + "New role added: " + response.role);
 
           selectionMaker();
         });
@@ -226,8 +226,8 @@ var con = mysql.createConnection({
         }
         ]
 
-        ).then(function(answer){
-         var deptUpdate = answer.department;
+        ).then(function(response){
+         var deptUpdate = response.department;
 
          inquirer.prompt(
             {
@@ -236,8 +236,8 @@ var con = mysql.createConnection({
               name: 'newName'
             }
 
-         ).then(function(answer) {
-          var newName = answer.newName;
+         ).then(function(response) {
+          var newName = response.newName;
           con.query("UPDATE departments SET ? WHERE ?",
             [
               {
@@ -272,9 +272,9 @@ var con = mysql.createConnection({
         message: 'Select role to update?',
         choices: choices,
         name: 'role'
-      }).then(function(answer){
+      }).then(function(response){
         choices = [];
-        var roleUpdate = answer.role;
+        var roleUpdate = response.role;
         inquirer.prompt(
         [{
           type: 'input',
@@ -287,10 +287,10 @@ var con = mysql.createConnection({
           name: 'salary'
         }
       ])
-      .then(function(answers) {
-        var updatedTitle = answers.title;
+      .then(function(response) {
+        var updatedTitle = response.title;
 
-        var updatedSalary = answers.salary;
+        var updatedSalary = response.salary;
 
         con.query("UPDATE roles SET ? WHERE ?", 
         [
