@@ -78,6 +78,7 @@ var con = mysql.createConnection({
         for (var i = 0; i < res.length; i++) {
           console.log("\n" + " Name: " + res[i].dept_name + " ID: " + res[i].id);
       }
+      //setTimeout(selectionMaker(), 5000);
       selectionMaker();
     });
   }
